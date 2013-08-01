@@ -15,13 +15,39 @@ void main() {
 }
 
 void draw(){ 
+  maxIterations = int.parse(query('#maxIterations').value);
   zoom = double.parse(slider.value);
   if(zoom == 'NaN') zoom = 1;
-  screenScaleX = (((viewBoundsX[1] - viewBoundsX[0]) / screenWidth)).abs() / zoom; 
-  screenScaleY = ((viewBoundsY[1] - viewBoundsY[0]) / screenHeight).abs() / zoom;
-  context.clearRect(0, 0, screenWidth, screenHeight);
-  _buildData();
-  //_render();  
+  
+  var origin = (query("#origin") as InputElement).value;
+  
+  var coords = origin.split(',');
+  
+  var x = 3.5 / zoom;
+  var y = 2 / zoom;
+
+  num xCoord = double.parse(coords[0]);
+  num yCoord = double.parse(coords[1]);
+  
+  var xMin = xCoord - (x / 2);
+  var xMax = xCoord + (x / 2);
+     
+  var yMin = yCoord - (y / 2);
+  var yMax = yCoord + (y / 2);
+    
+  num scaleX = x / screenWidth;;
+  num scaleY = y / screenHeight;
+  
+  screenScaleX = scaleX;
+  screenScaleY = scaleY;
+ 
+  
+  centerX = xCoord;
+  centerY = yCoord;
+  
+  context.clearRect(0, 0, screenWidth, screenHeight);   
+  
+  _buildData();  
 }
 
 
@@ -31,22 +57,52 @@ void _buildData() {
       var scaledX = (x - screenCenterX) * screenScaleX - centerX;
       var scaledY = (y - screenCenterY) * screenScaleY - centerY;      
       var numberOfIterations = iterateFunction(complex(scaledX,scaledY), maxIterations);
-      //_screenMap[complex(x,y)] = getColor(numberOfIterations);
+      
       drawPixel(x,y, getColor(numberOfIterations));
-//      if(x % 50 == 0 && y % 50 == 0)
-//        print("($x, $y)\t($scaledX,$scaledY)\t$numberOfIterations");   
     }
   }
 }
 
-//void _render() {  
-//  _screenMap.forEach((point, color) => 
-//      drawPixel(point.i, point.j, color));
-//}
+var colors = ['#000000',
+              '#5E3977',
+              '#8F8BC4',
+              '#49897D',
+              '#813E1F',
+              '#C1D2C1',
+              '#B555AF',
+              '#C5022C',
+              '#7F5164',
+              '#4CFE9D',
+              '#09287A',
+              '#10A520',
+              '#0FB1AD',
+              '#CC67F4',
+              '#B82606',
+              '#74375C',
+              '#9F8228',
+              '#D24C1B',
+              '#84CE4B',
+              '#C607BA',
+              '#DDC14E',
+              '#1DD813',
+              '#D49E51',
+              '#22BC66',
+              '#6F8E26',
+              '#CFE6A0',
+              '#5F642A',
+              '#A46ED9',
+              '#CC8B66',
+              '#D5FCE0',
+              '#AAD148'];
 
-String getColor(int iterations){
-  var percent = (iterations / maxIterations);
-  int red = (255 * percent).toInt();
+String getColor(int iterations){  
+  var percent = (iterations / maxIterations) * 100;
+  
+  var index = percent % (colors.length);
+  
+  return colors[index.toInt()];
+  
+  /*int red = (255 * percent).toInt();
   int blue = 255 - red;
   var redVal = red.toRadixString(16);
   while (redVal.length < 2) { 
@@ -56,7 +112,7 @@ String getColor(int iterations){
   while (blueVal.length < 2) { 
     blueVal = '0' + blueVal;
   }
-  return '#$redVal' + '00$blueVal';
+  return '#$redVal' + '00$blueVal';*/
 }
 
 void drawPixel(num x, num y, String color) {         
