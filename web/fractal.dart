@@ -1,25 +1,23 @@
 library fractal;
 
 import 'dart:html';
-import 'dart:math';
-import 'dart:isolate';
 import '../complex.dart';
 
 final CanvasRenderingContext2D context =
-(query("#fractal") as CanvasElement).context2D;
-final InputElement slider = query("#slider");
+(querySelector("#fractal") as CanvasElement).context2D;
+final InputElement slider = querySelector("#slider");
 
 void main() {  
   //draw();
-  query('#render').onClick.listen((e) => draw());
+  querySelector('#render').onClick.listen((e) => draw());
 }
 
 void draw(){ 
-  maxIterations = int.parse(query('#maxIterations').value);
+  maxIterations = int.parse((querySelector('#maxIterations') as InputElement).value);
   zoom = double.parse(slider.value);
   if(zoom == 'NaN') zoom = 1;
   
-  var origin = (query("#origin") as InputElement).value;
+  var origin = (querySelector("#origin") as InputElement).value;
   
   var coords = origin.split(',');
   
@@ -101,24 +99,11 @@ String getColor(int iterations){
   var index = percent % (colors.length);
   
   return colors[index.toInt()];
-  
-  /*int red = (255 * percent).toInt();
-  int blue = 255 - red;
-  var redVal = red.toRadixString(16);
-  while (redVal.length < 2) { 
-    redVal = '0' + redVal;
-  }  
-  var blueVal = blue.toRadixString(16);
-  while (blueVal.length < 2) { 
-    blueVal = '0' + blueVal;
-  }
-  return '#$redVal' + '00$blueVal';*/
 }
 
 void drawPixel(num x, num y, String color) {         
   context..fillStyle = color
-         ..fillRect(x, y, 1, 1);  
-  
+         ..fillRect(x, y, 1, 1);    
 }
 
 int iterateFunction(Complex value, int maxIteration) {
@@ -133,9 +118,9 @@ int iterateFunction(Complex value, int maxIteration) {
   return iteration;
 }
 
-int screenWidth = query("#fractal").clientWidth;
+int screenWidth = querySelector("#fractal").clientWidth;
 num get screenCenterX => screenWidth / 2;
-int screenHeight = query("#fractal").clientHeight;
+int screenHeight = querySelector("#fractal").clientHeight;
 num get screenCenterY => screenHeight / 2;
 int maxIterations = 1500;
 num zoom = 2;
